@@ -16,8 +16,9 @@ window.addEventListener('load', function () {
   var breakLengthInMinutes = 5;
   var sessionLengthInMinutes = 25;
   var startTime;
-  var mode = 'session'; // session or break
+  var mode = 'session'; // will be 'session' or 'break'
   var currentTimerLength = sessionLengthInMinutes * 60000;
+  var remainingTime = currentTimerLength;
   var isStopped = true;
   var timerIntervalId;
 
@@ -26,30 +27,45 @@ window.addEventListener('load', function () {
    */
   breakLengthElement.innerText = breakLengthInMinutes;
   sessionLengthElement.innerText = sessionLengthInMinutes;
-  remainingTimeElement.innerText = '0:00';
+  remainingTimeElement.innerText = formatTime(remainingTime);
   modeElement.innerText = 'Pomodoro';
 
   /*
-   * Main function to do all calculations and countdown.
+   * Converts milliseconds to formatted string. e.g. 1500000 returns '25:00'
    */
-  function updateTime() {
-    var currentTimeInMs = Date.now();
-    var elapsedTime = currentTimeInMs - startTime;
-    var remainingTimeInMs = currentTimerLength - elapsedTime;
-    if (remainingTimeInMs <= 0) {
+  function formatTime(time) {
+    var minutes = parseInt(time / 1000 / 60);
+    var seconds = parseInt(time / 1000 % 60);
+    if (seconds < 10) {
+      return minutes + ':0' + seconds;
+    } else {
+      return minutes + ':' + seconds;
+    }
+  }
+
+  /*
+   * Performs relevant timer updates when called by setInterval() function.
+   */
+  function updateTimer() {
+    // 1. Update remaining time
+    var elapsedTime = Date.now() - startTime;
+    remainingTime = currentTimerLength - elapsedTime;
+    remainingTimeElement.innerText = formatTime(remainingTime);
+
+    // 2. Switch mode if needed
+    if (remainingTime <= 0) {
       if (mode === 'session') {
         mode = 'break';
-        startTime = Date.now();
         currentTimerLength = breakLengthInMinutes * 60000;
+        modeElement.innerText = 'Break';
       } else if (mode === 'break') {
         mode = 'session';
-        startTime = Date.now();
         currentTimerLength = sessionLengthInMinutes * 60000;
+        modeElement.innerText = 'Session';
       }
-    } else {
-      var minutes = parseInt(remainingTimeInMs / 1000 / 60);
-      var seconds = parseInt(remainingTimeInMs / 1000 % 60);
-      remainingTimeElement.innerText = minutes + ':' + seconds;
+      startTime = Date.now();
+      remainingTime = currentTimerLength;
+      document.body.setAttribute('data-mode', mode);
     }
   }
 
@@ -61,21 +77,29 @@ window.addEventListener('load', function () {
     if (isStopped) {
       isStopped = false;
       startTime = Date.now();
-      timerIntervalId = setInterval(updateTime, 100);
-      document.body.classList.add(mode);
+      document.body.setAttribute('data-mode', mode);
+      modeElement.innerText = (mode === 'session') ? 'Session' : 'Break';
+      timerIntervalId = setInterval(updateTimer, 100);
     }
   });
 
   document.getElementById('stop').addEventListener('click', function () {
     if (!isStopped) {
+      clearInterval(timerIntervalId);
       isStopped = true;
       currentTimerLength -= Date.now() - startTime;
-      clearInterval(timerIntervalId);
     }
   });
 
   document.getElementById('clear').addEventListener('click', function () {
-    document.body.classList.remove('session', 'break');
+    clearInterval(timerIntervalId);
+    isStopped = true;
+    mode = 'session';
+    currentTimerLength = sessionLengthInMinutes * 60000
+    remainingTime = currentTimerLength;
+    remainingTimeElement.innerText = formatTime(remainingTime);
+    document.body.removeAttribute('data-mode');
+    modeElement.innerText = 'Pomodoro';
   });
 
   document.getElementById('decrease-break').addEventListener('click', function () {
@@ -87,11 +111,17 @@ window.addEventListener('load', function () {
   });
 
   function updateBreakLength(length) {
-    if (length < 1) return;
-    breakLengthInMinutes = length;
-    breakLengthElement.innerText = breakLengthInMinutes;
+    if (length > 0) {
+      breakLengthInMinutes = length;
+      breakLengthElement.innerText = breakLengthInMinutes;
 
-    // extra functionality
+      if (mode === 'break') {
+        startTime = Date.now();
+        currentTimerLength = breakLengthInMinutes * 60000;
+        remainingTime = currentTimerLength;
+        remainingTimeElement.innerText = formatTime(remainingTime);
+      }
+    }
   }
 
   document.getElementById('decrease-session').addEventListener('click', function () {
@@ -103,14 +133,16 @@ window.addEventListener('load', function () {
   });
 
   function updateSessionLength(length) {
-    if (length < 1) return;
-    sessionLengthInMinutes = length;
-    sessionLengthElement.innerText = sessionLengthInMinutes;
+    if (length > 0) {
+      sessionLengthInMinutes = length;
+      sessionLengthElement.innerText = sessionLengthInMinutes;
 
-    // look at this
-    if (mode === 'session') {
-      startTime = Date.now();
-      currentTimerLength = sessionLengthInMinutes * 60000;
+      if (mode === 'session') {
+        startTime = Date.now();
+        currentTimerLength = sessionLengthInMinutes * 60000;
+        remainingTime = currentTimerLength;
+        remainingTimeElement.innerText = formatTime(remainingTime);
+      }
     }
   }
 
