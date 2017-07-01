@@ -5,68 +5,51 @@ window.addEventListener('load', function () {
   /*
    * DOM elements. 
    */
-  var breakLengthElement = document.getElementById('break-length');
-  var sessionLengthElement = document.getElementById('session-length');
-  var remainingTimeElement = document.getElementById('remaining-time');
-  var modeElement = document.getElementById('mode');
+  var breakLengthElement = document.getElementById('break-length'),
+    sessionLengthElement = document.getElementById('session-length'),
+    remainingTimeElement = document.getElementById('remaining-time'),
+    modeElement = document.getElementById('mode'),
+    fillElement = document.getElementById('fill');
 
   /*
    * All times are stored in milliseconds unless stated otherwise.
    */
-  var breakLengthInMinutes = 5;
-  var sessionLengthInMinutes = 25;
-  var startTime;
-  var mode = 'session'; // will be 'session' or 'break'
-  var currentTimerLength = sessionLengthInMinutes * 60000;
-  var remainingTime = currentTimerLength;
-  var isStopped = true;
-  var timerIntervalId;
+  var breakLengthInMinutes = 5,
+    sessionLengthInMinutes = 25,
+    startTime,
+    mode = 'Session',
+    timerLength = minutesToMilliseconds(sessionLengthInMinutes),
+    originalTimerLength = timerLength,
+    remainingTime = timerLength,
+    isStopped = true,
+    timerIntervalId;
 
   /*
    * Initialise DOM elements.
    */
   breakLengthElement.innerText = breakLengthInMinutes;
   sessionLengthElement.innerText = sessionLengthInMinutes;
-  remainingTimeElement.innerText = formatTime(remainingTime);
+  remainingTimeElement.innerText = formatTime(timerLength);
   modeElement.innerText = 'Pomodoro';
 
   /*
-   * Converts milliseconds to formatted string. e.g. 1500000 returns '25:00'
+   * Helper functions.
+   */
+
+  function minutesToMilliseconds(minutes) {
+    return minutes * 60000;
+  }
+
+  /*
+   * Converts milliseconds to formatted string. e.g. 1500000 returns '25:00'.
    */
   function formatTime(time) {
     var minutes = parseInt(time / 1000 / 60);
     var seconds = parseInt(time / 1000 % 60);
     if (seconds < 10) {
-      return minutes + ':0' + seconds;
-    } else {
-      return minutes + ':' + seconds;
+      seconds = '0' + seconds;
     }
-  }
-
-  /*
-   * Performs relevant timer updates when called by setInterval() function.
-   */
-  function updateTimer() {
-    // 1. Update remaining time
-    var elapsedTime = Date.now() - startTime;
-    remainingTime = currentTimerLength - elapsedTime;
-    remainingTimeElement.innerText = formatTime(remainingTime);
-
-    // 2. Switch mode if needed
-    if (remainingTime <= 0) {
-      if (mode === 'session') {
-        mode = 'break';
-        currentTimerLength = breakLengthInMinutes * 60000;
-        modeElement.innerText = 'Break';
-      } else if (mode === 'break') {
-        mode = 'session';
-        currentTimerLength = sessionLengthInMinutes * 60000;
-        modeElement.innerText = 'Session';
-      }
-      startTime = Date.now();
-      remainingTime = currentTimerLength;
-      document.body.setAttribute('data-mode', mode);
-    }
+    return minutes + ':' + seconds;
   }
 
   /*
@@ -78,27 +61,57 @@ window.addEventListener('load', function () {
       isStopped = false;
       startTime = Date.now();
       document.body.setAttribute('data-mode', mode);
-      modeElement.innerText = (mode === 'session') ? 'Session' : 'Break';
-      timerIntervalId = setInterval(updateTimer, 100);
+      modeElement.innerText = mode;
+      timerIntervalId = setInterval(updateTimer, 500);
     }
   });
+
+  function updateTimer() {
+    // 1. Update remaining time
+    var elapsedTime = Date.now() - startTime;
+    remainingTime = timerLength - elapsedTime;
+    remainingTimeElement.innerText = formatTime(remainingTime);
+
+    // 2. Update fill element height in DOM
+    var percentageComplete = parseInt((originalTimerLength - remainingTime) /
+      originalTimerLength * 100);
+    fillElement.style.height = percentageComplete + '%';
+
+    // 3. Switch mode if needed
+    if (remainingTime > 0) {
+      return;
+    } else if (mode === 'Session') {
+      mode = 'Break';
+      timerLength = minutesToMilliseconds(breakLengthInMinutes);
+    } else {
+      mode = 'Session';
+      timerLength = minutesToMilliseconds(sessionLengthInMinutes);
+    }
+    startTime = Date.now();
+    originalTimerLength = timerLength;
+    remainingTime = timerLength;
+    document.body.setAttribute('data-mode', mode);
+    modeElement.innerText = mode;
+  }
 
   document.getElementById('stop').addEventListener('click', function () {
     if (!isStopped) {
       clearInterval(timerIntervalId);
       isStopped = true;
-      currentTimerLength -= Date.now() - startTime;
+      timerLength -= Date.now() - startTime;
     }
   });
 
   document.getElementById('clear').addEventListener('click', function () {
     clearInterval(timerIntervalId);
     isStopped = true;
-    mode = 'session';
-    currentTimerLength = sessionLengthInMinutes * 60000
-    remainingTime = currentTimerLength;
+    mode = 'Session';
+    timerLength = minutesToMilliseconds(sessionLengthInMinutes);
+    originalTimerLength = timerLength;
+    remainingTime = timerLength;
     remainingTimeElement.innerText = formatTime(remainingTime);
     document.body.removeAttribute('data-mode');
+    fillElement.style.height = '0%';
     modeElement.innerText = 'Pomodoro';
   });
 
@@ -115,11 +128,13 @@ window.addEventListener('load', function () {
       breakLengthInMinutes = length;
       breakLengthElement.innerText = breakLengthInMinutes;
 
-      if (mode === 'break') {
+      if (mode === 'Break') {
         startTime = Date.now();
-        currentTimerLength = breakLengthInMinutes * 60000;
-        remainingTime = currentTimerLength;
+        timerLength = breakLengthInMinutes * 60000;
+        originalTimerLength = timerLength;
+        remainingTime = timerLength;
         remainingTimeElement.innerText = formatTime(remainingTime);
+        fillElement.style.height = '0%';
       }
     }
   }
@@ -137,11 +152,13 @@ window.addEventListener('load', function () {
       sessionLengthInMinutes = length;
       sessionLengthElement.innerText = sessionLengthInMinutes;
 
-      if (mode === 'session') {
+      if (mode === 'Session') {
         startTime = Date.now();
-        currentTimerLength = sessionLengthInMinutes * 60000;
-        remainingTime = currentTimerLength;
+        timerLength = sessionLengthInMinutes * 60000;
+        originalTimerLength = timerLength;
+        remainingTime = timerLength;
         remainingTimeElement.innerText = formatTime(remainingTime);
+        fillElement.style.height = '0%';
       }
     }
   }

@@ -1,0 +1,13 @@
+.outer {
+  background-color: grey;
+  width: 300px;
+  height: 300px;
+  position: relative;
+}
+
+#fill {
+  background-color: blue;
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+}
