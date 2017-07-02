@@ -1,13 +1,128 @@
-.outer {
-  background-color: grey;
-  width: 300px;
-  height: 300px;
+/*
+  COLOURS
+             R    G    B
+    white - 255, 250, 255
+    black -  48,  48,  54
+    grey  - 179, 174, 179
+    blue  -   0, 201, 255
+          -   0, 150, 204 (20% darker)
+    green - 146, 254, 157
+          -  95, 203, 106 (20% darker)
+    red   - 252,  81,  48
+*/
+
+html {
+  font-size: 62.5%;
+}
+
+body {
+  font-family: 'Holtwood One SC', serif;
+  background: rgb(0, 201, 255);
+  background: -webkit-linear-gradient(left, rgb(0, 201, 255), rgb(146, 254, 157));
+  background: linear-gradient(to right, rgb(0, 201, 255), rgb(146, 254, 157));
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  -webkit-box-pack: center;
+  -ms-flex-pack: center;
+  justify-content: center;
+  text-align: center;
+  min-height: 100%;
+  min-height: 100vh;
+  font-size: 2rem;
+  color: rgb(255, 250, 255);
+  text-shadow: 0.2rem 0.2rem rgb(48, 48, 54);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+main {
+  margin: 2rem;
+}
+
+h1 {
+  font-size: 3.6rem;
+}
+
+#mode-buttons {
+  margin-top: 3rem;
+}
+
+#break-length-buttons,
+#session-length-buttons {
+  width: 40%;
+  display: inline-block;
+}
+
+#break-length,
+#session-length {
+  width: 30%;
+  display: inline-block;
+}
+
+button {
+  cursor: pointer;
+  font-family: inherit;
+  border: none;
+  background: none;
+  color: inherit;
+  text-shadow: inherit;
+  outline: none;
+  font-size: inherit;
+}
+
+button:hover,
+button:focus {
+  color: rgb(179, 174, 179);
+}
+
+#progress {
+  overflow: hidden;
   position: relative;
+  margin: 2rem auto;
+  width: 30rem;
+  height: 30rem;
+  border-radius: 50%;
+  vertical-align: bottom;
+}
+
+#center {
+  margin: 2rem;
+  position: absolute;
+  width: 26rem;
+  height: 26rem;
+  border-radius: 50%;
+  background-color: rgba(0, 150, 204, 0.7);
+}
+
+body[data-mode="Session"] #center {
+  background-color: rgba(95, 203, 106, 0.7);
+}
+
+body[data-mode="Break"] #center {
+  background-color: rgba(252, 81, 48, 0.7);
 }
 
 #fill {
-  background-color: blue;
   position: absolute;
+  background-color: rgb(255, 250, 255);
   bottom: 0;
   width: 100%;
+}
+
+#mode {
+  margin-top: 10.5rem;
+}
+
+#remaining-time {
+  margin-top: 1rem;
+}
+
+#control-buttons button {
+  width: 30%;
 }

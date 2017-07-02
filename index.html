@@ -5,32 +5,42 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
-  <title>Document</title>
-  <link rel="stylesheet" href="./reset.css">
-  <link rel="stylesheet" href="./main.css">
+  <title>Pomodoro Clock</title>
+  <link rel="stylesheet" type="text/css" href="https://fonts.googleapis.com/css?family=Holtwood+One+SC">
+  <link rel="stylesheet" type="text/css" href="./reset.css">
+  <link rel="stylesheet" type="text/css" href="./main.css">
 </head>
 
 <body>
-
-  <div class="outer">
-    <div id="fill">
+  <main>
+    <h1>Pomodoro Clock</h1>
+    <div id="mode-buttons">
+      <div id="break-length-buttons">
+        <p>Break Length</p>
+        <button type="button" id="decrease-break">-</button>
+        <span id="break-length"></span>
+        <button type="button" id="increase-break">+</button>
+      </div>
+      <div id="session-length-buttons">
+        <p>Session Length</p>
+        <button type="button" id="decrease-session">-</button>
+        <span id="session-length"></span>
+        <button type="button" id="increase-session">+</button>
+      </div>
     </div>
-  </div>
-  <button type="button" id="decrease-break">-</button>
-  <span id="break-length"></span>
-  <button type="button" id="increase-break">+</button>
-  <button type="button" id="decrease-session">-</button>
-  <span id="session-length"></span>
-  <button type="button" id="increase-session">+</button>
-  <br>
-  <span id="remaining-time"></span>
-  <br>
-  <span id="mode"></span>
-  <br>
-  <button type="button" id="start">Start</button>
-  <button type="button" id="stop">Stop</button>
-  <button type="button" id="clear">Clear</button>
-
+    <div id="progress">
+      <div id="fill"></div>
+      <div id="center">
+        <p id="mode"></p>
+        <p id="remaining-time"></p>
+      </div>
+    </div>
+    <div id="control-buttons">
+      <button type="button" id="start">Start</button>
+      <button type="button" id="stop">Stop</button>
+      <button type="button" id="clear">Clear</button>
+    </div>
+  </main>
   <script src="./main.js"></script>
 </body>
 

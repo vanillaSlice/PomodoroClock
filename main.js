@@ -62,36 +62,36 @@ window.addEventListener('load', function () {
       startTime = Date.now();
       document.body.setAttribute('data-mode', mode);
       modeElement.innerText = mode;
-      timerIntervalId = setInterval(updateTimer, 500);
+      timerIntervalId = setInterval(updateTimer, 200);
     }
   });
 
   function updateTimer() {
-    // 1. Update remaining time
+    // 1. Switch mode if needed
+    if (remainingTime <= 0) {
+      if (mode === 'Session') {
+        mode = 'Break';
+        timerLength = minutesToMilliseconds(breakLengthInMinutes);
+      } else {
+        mode = 'Session';
+        timerLength = minutesToMilliseconds(sessionLengthInMinutes);
+      }
+      startTime = Date.now();
+      originalTimerLength = timerLength;
+      remainingTime = timerLength;
+      document.body.setAttribute('data-mode', mode);
+      modeElement.innerText = mode;
+    }
+
+    // 2. Update remaining time
     var elapsedTime = Date.now() - startTime;
     remainingTime = timerLength - elapsedTime;
     remainingTimeElement.innerText = formatTime(remainingTime);
 
-    // 2. Update fill element height in DOM
+    // 3. Update fill element height in DOM
     var percentageComplete = parseInt((originalTimerLength - remainingTime) /
       originalTimerLength * 100);
     fillElement.style.height = percentageComplete + '%';
-
-    // 3. Switch mode if needed
-    if (remainingTime > 0) {
-      return;
-    } else if (mode === 'Session') {
-      mode = 'Break';
-      timerLength = minutesToMilliseconds(breakLengthInMinutes);
-    } else {
-      mode = 'Session';
-      timerLength = minutesToMilliseconds(sessionLengthInMinutes);
-    }
-    startTime = Date.now();
-    originalTimerLength = timerLength;
-    remainingTime = timerLength;
-    document.body.setAttribute('data-mode', mode);
-    modeElement.innerText = mode;
   }
 
   document.getElementById('stop').addEventListener('click', function () {
