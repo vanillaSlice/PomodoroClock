@@ -1,128 +1,138 @@
 /*
-  COLOURS
-             R    G    B
-    white - 255, 250, 255
-    black -  48,  48,  54
-    grey  - 179, 174, 179
-    blue  -   0, 201, 255
-          -   0, 150, 204 (20% darker)
-    green - 146, 254, 157
-          -  95, 203, 106 (20% darker)
-    red   - 252,  81,  48
-*/
+ *  COLOURS
+ *              R    G    B
+ *    White - 255, 250, 255
+ *    Black -  48,  48,  54
+ *    Grey  - 179, 174, 179
+ *    Blue  -   0, 201, 255
+ *          -   0, 150, 204 (20% darker)
+ *    Green - 146, 254, 157
+ *          -  95, 203, 106 (20% darker)
+ *    Red   - 252,  81,  48
+ */
+
+
+/*
+ * General styles
+ */
 
 html {
-  font-size: 62.5%;
+  font-size: 0.5rem;
+  height: 100%;
 }
 
 body {
-  font-family: 'Holtwood One SC', serif;
   background: rgb(0, 201, 255);
-  background: -webkit-linear-gradient(left, rgb(0, 201, 255), rgb(146, 254, 157));
+  background: -webkit-gradient(linear, left top, right top, from(rgb(0, 201, 255)), to(rgb(146, 254, 157)));
   background: linear-gradient(to right, rgb(0, 201, 255), rgb(146, 254, 157));
+  color: rgb(255, 250, 255);
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
-  -webkit-box-align: center;
-  -ms-flex-align: center;
-  align-items: center;
-  -webkit-box-pack: center;
-  -ms-flex-pack: center;
-  justify-content: center;
-  text-align: center;
-  min-height: 100%;
-  min-height: 100vh;
+  font-family: 'Holtwood One SC', serif;
   font-size: 2rem;
-  color: rgb(255, 250, 255);
+  height: 100%;
+  text-align: center;
   text-shadow: 0.2rem 0.2rem rgb(48, 48, 54);
 }
 
-* {
-  box-sizing: border-box;
+*,
+*::before,
+*::after {
+  -webkit-box-sizing: border-box;
+          box-sizing: border-box;
 }
 
-main {
-  margin: 2rem;
+@media (min-width: 48em) {
+  html {
+    font-size: 62.5%;
+  }
 }
 
-h1 {
+
+/*
+ * Specific styles
+ */
+
+.container {
+  margin: auto;
+  padding: 3rem 1.5rem;
+}
+
+.heading {
   font-size: 3.6rem;
+  margin-bottom: 3rem;
 }
 
-#mode-buttons {
-  margin-top: 3rem;
-}
-
-#break-length-buttons,
-#session-length-buttons {
+.break-btns,
+.session-btns {
+  display: inline-block;
   width: 40%;
-  display: inline-block;
 }
 
-#break-length,
-#session-length {
-  width: 30%;
-  display: inline-block;
-}
-
-button {
+.btn {
+  background: none;
+  border: none;
+  color: inherit;
   cursor: pointer;
   font-family: inherit;
-  border: none;
-  background: none;
-  color: inherit;
-  text-shadow: inherit;
-  outline: none;
   font-size: inherit;
+  outline: none;
+  text-shadow: inherit;
 }
 
-button:hover,
-button:focus {
+.btn:hover,
+.btn:focus {
   color: rgb(179, 174, 179);
 }
 
-#progress {
+.length {
+  display: inline-block;
+  width: 30%;
+}
+
+.progress {
+  border-radius: 50%;
+  height: 30rem;
+  margin: 2rem auto;
   overflow: hidden;
   position: relative;
-  margin: 2rem auto;
-  width: 30rem;
-  height: 30rem;
-  border-radius: 50%;
   vertical-align: bottom;
+  width: 30rem;
 }
 
-#center {
-  margin: 2rem;
-  position: absolute;
-  width: 26rem;
-  height: 26rem;
-  border-radius: 50%;
-  background-color: rgba(0, 150, 204, 0.7);
-}
-
-body[data-mode="Session"] #center {
-  background-color: rgba(95, 203, 106, 0.7);
-}
-
-body[data-mode="Break"] #center {
-  background-color: rgba(252, 81, 48, 0.7);
-}
-
-#fill {
-  position: absolute;
+.fill {
   background-color: rgb(255, 250, 255);
   bottom: 0;
+  position: absolute;
   width: 100%;
 }
 
-#mode {
+.center {
+  background-color: rgba(0, 150, 204, 0.7);
+  border-radius: 50%;
+  height: 26rem;
+  margin: 2rem;
+  position: absolute;
+  width: 26rem;
+}
+
+body[data-mode='Session'] .center {
+  background-color: rgba(95, 203, 106, 0.7);
+}
+
+body[data-mode='Break'] .center {
+  background-color: rgba(252, 81, 48, 0.7);
+}
+
+.mode {
   margin-top: 10.5rem;
 }
 
-#remaining-time {
+.remaining-time {
   margin-top: 1rem;
 }
 
-#control-buttons button {
+.control-btns .btn {
   width: 30%;
 }

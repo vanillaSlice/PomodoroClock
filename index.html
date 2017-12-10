@@ -19,35 +19,36 @@
 </head>
 
 <body>
-  <main>
-    <h1>Pomodoro Clock</h1>
-    <div id="mode-buttons">
-      <div id="break-length-buttons">
+  <main class="container">
+    <h1 class="heading">Pomodoro Clock</h1>
+    <div class="mode-btns">
+      <div class="break-btns">
         <p>Break Length</p>
-        <button type="button" id="decrease-break">-</button>
-        <span id="break-length"></span>
-        <button type="button" id="increase-break">+</button>
+        <button class="btn" type="button" id="decrease-break">-</button>
+        <span class="length" id="break-length"></span>
+        <button class="btn" type="button" id="increase-break">+</button>
       </div>
-      <div id="session-length-buttons">
+      <div class="session-btns">
         <p>Session Length</p>
-        <button type="button" id="decrease-session">-</button>
-        <span id="session-length"></span>
-        <button type="button" id="increase-session">+</button>
+        <button class="btn" type="button" id="decrease-session">-</button>
+        <span class="length" id="session-length"></span>
+        <button class="btn" type="button" id="increase-session">+</button>
       </div>
     </div>
-    <div id="progress">
-      <div id="fill"></div>
-      <div id="center">
-        <p id="mode"></p>
-        <p id="remaining-time"></p>
+    <div class="progress">
+      <div class="fill"></div>
+      <div class="center">
+        <p class="mode"></p>
+        <p class="remaining-time"></p>
       </div>
     </div>
-    <div id="control-buttons">
-      <button type="button" id="start">Start</button>
-      <button type="button" id="stop">Stop</button>
-      <button type="button" id="clear">Clear</button>
+    <div class="control-btns">
+      <button class="btn" type="button" id="start">Start</button>
+      <button class="btn" type="button" id="stop">Stop</button>
+      <button class="btn" type="button" id="clear">Clear</button>
     </div>
   </main>
+
   <script src="./main.js"></script>
 </body>
 

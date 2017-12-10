@@ -7,9 +7,9 @@ window.addEventListener('load', function () {
    */
   var breakLengthElement = document.getElementById('break-length'),
     sessionLengthElement = document.getElementById('session-length'),
-    remainingTimeElement = document.getElementById('remaining-time'),
-    modeElement = document.getElementById('mode'),
-    fillElement = document.getElementById('fill');
+    remainingTimeElement = document.querySelector('.remaining-time'),
+    modeElement = document.querySelector('.mode'),
+    fillElement = document.querySelector('.fill');
 
   /*
    * All times are stored in milliseconds unless stated otherwise.
