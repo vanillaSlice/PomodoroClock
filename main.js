@@ -1,28 +1,35 @@
-window.addEventListener('load', function () {
+window.addEventListener('load', function() {
 
   'use strict';
 
   /*
    * DOM elements. 
    */
-  var breakLengthElement = document.getElementById('break-length'),
-    sessionLengthElement = document.getElementById('session-length'),
-    remainingTimeElement = document.querySelector('.remaining-time'),
-    modeElement = document.querySelector('.mode'),
-    fillElement = document.querySelector('.fill');
+  var breakLengthElement = document.getElementById('break-length');
+  var decreaseBreakBtnElement = document.getElementById('decrease-break');
+  var increaseBreakBtnElement = document.getElementById('increase-break');
+  var sessionLengthElement = document.getElementById('session-length');
+  var decreaseSessionBtnElement = document.getElementById('decrease-session');
+  var increaseSessionBtnElement = document.getElementById('increase-session');
+  var remainingTimeElement = document.querySelector('.remaining-time');
+  var modeElement = document.querySelector('.mode');
+  var fillElement = document.querySelector('.fill');
+  var startBtnElement = document.getElementById('start');
+  var stopBtnElement = document.getElementById('stop');
+  var clearBtnElement = document.getElementById('clear');
 
   /*
    * All times are stored in milliseconds unless stated otherwise.
    */
-  var breakLengthInMinutes = 5,
-    sessionLengthInMinutes = 25,
-    startTime,
-    mode = 'Session',
-    timerLength = minutesToMilliseconds(sessionLengthInMinutes),
-    originalTimerLength = timerLength,
-    remainingTime = timerLength,
-    isStopped = true,
-    timerIntervalId;
+  var breakLengthInMinutes = 5;
+  var sessionLengthInMinutes = 25;
+  var startTime;
+  var mode = 'Session';
+  var timerLength = minutesToMilliseconds(sessionLengthInMinutes);
+  var originalTimerLength = timerLength;
+  var remainingTime = timerLength;
+  var isStopped = true;
+  var timerIntervalId;
 
   /*
    * Initialise DOM elements.
@@ -56,14 +63,17 @@ window.addEventListener('load', function () {
    * Add button event listeners.
    */
 
-  document.getElementById('start').addEventListener('click', function () {
-    if (isStopped) {
-      isStopped = false;
-      startTime = Date.now();
-      document.body.setAttribute('data-mode', mode);
-      modeElement.innerText = mode;
-      timerIntervalId = setInterval(updateTimer, 200);
+  startBtnElement.addEventListener('click', function () {
+    // already running so don't need to do anything
+    if (!isStopped) {
+      return;
     }
+
+    isStopped = false;
+    startTime = Date.now();
+    document.body.setAttribute('data-mode', mode);
+    modeElement.innerText = mode;
+    timerIntervalId = setInterval(updateTimer, 200);
   });
 
   function updateTimer() {
@@ -89,20 +99,22 @@ window.addEventListener('load', function () {
     remainingTimeElement.innerText = formatTime(remainingTime);
 
     // 3. Update fill element height in DOM
-    var percentageComplete = parseInt((originalTimerLength - remainingTime) /
-      originalTimerLength * 100);
+    var percentageComplete = parseInt((originalTimerLength - remainingTime) / originalTimerLength * 100);
     fillElement.style.height = percentageComplete + '%';
   }
 
-  document.getElementById('stop').addEventListener('click', function () {
-    if (!isStopped) {
-      clearInterval(timerIntervalId);
-      isStopped = true;
-      timerLength -= Date.now() - startTime;
+  stopBtnElement.addEventListener('click', function () {
+    // already stopped so don't need to do anything
+    if (isStopped) {
+      return;
     }
+
+    clearInterval(timerIntervalId);
+    isStopped = true;
+    timerLength -= Date.now() - startTime;
   });
 
-  document.getElementById('clear').addEventListener('click', function () {
+  clearBtnElement.addEventListener('click', function () {
     clearInterval(timerIntervalId);
     isStopped = true;
     mode = 'Session';
@@ -115,51 +127,57 @@ window.addEventListener('load', function () {
     modeElement.innerText = 'Pomodoro';
   });
 
-  document.getElementById('decrease-break').addEventListener('click', function () {
+  decreaseBreakBtnElement.addEventListener('click', function () {
     updateBreakLength(breakLengthInMinutes - 1);
   });
 
-  document.getElementById('increase-break').addEventListener('click', function () {
+  increaseBreakBtnElement.addEventListener('click', function () {
     updateBreakLength(breakLengthInMinutes + 1);
   });
 
   function updateBreakLength(length) {
-    if (length > 0) {
-      breakLengthInMinutes = length;
-      breakLengthElement.innerText = breakLengthInMinutes;
+    // make sure we can't update break to be less than 1
+    if (length < 1) {
+      return;
+    }
 
-      if (mode === 'Break') {
-        startTime = Date.now();
-        timerLength = breakLengthInMinutes * 60000;
-        originalTimerLength = timerLength;
-        remainingTime = timerLength;
-        remainingTimeElement.innerText = formatTime(remainingTime);
-        fillElement.style.height = '0%';
-      }
+    breakLengthInMinutes = length;
+    breakLengthElement.innerText = breakLengthInMinutes;
+
+    if (mode === 'Break') {
+      startTime = Date.now();
+      timerLength = breakLengthInMinutes * 60000;
+      originalTimerLength = timerLength;
+      remainingTime = timerLength;
+      remainingTimeElement.innerText = formatTime(remainingTime);
+      fillElement.style.height = '0%';
     }
   }
 
-  document.getElementById('decrease-session').addEventListener('click', function () {
+  decreaseSessionBtnElement.addEventListener('click', function () {
     updateSessionLength(sessionLengthInMinutes - 1);
   });
 
-  document.getElementById('increase-session').addEventListener('click', function () {
+  increaseSessionBtnElement.addEventListener('click', function () {
     updateSessionLength(sessionLengthInMinutes + 1);
   });
 
   function updateSessionLength(length) {
-    if (length > 0) {
-      sessionLengthInMinutes = length;
-      sessionLengthElement.innerText = sessionLengthInMinutes;
+    // make sure we can't update session to be less than 1
+    if (length < 1) {
+      return;
+    }
 
-      if (mode === 'Session') {
-        startTime = Date.now();
-        timerLength = sessionLengthInMinutes * 60000;
-        originalTimerLength = timerLength;
-        remainingTime = timerLength;
-        remainingTimeElement.innerText = formatTime(remainingTime);
-        fillElement.style.height = '0%';
-      }
+    sessionLengthInMinutes = length;
+    sessionLengthElement.innerText = sessionLengthInMinutes;
+
+    if (mode === 'Session') {
+      startTime = Date.now();
+      timerLength = sessionLengthInMinutes * 60000;
+      originalTimerLength = timerLength;
+      remainingTime = timerLength;
+      remainingTimeElement.innerText = formatTime(remainingTime);
+      fillElement.style.height = '0%';
     }
   }
 
