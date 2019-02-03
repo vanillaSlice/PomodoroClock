@@ -1,3 +1,9 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
 html {
   font-size: 0.5rem;
   height: 100%;
@@ -13,18 +19,6 @@ body {
   height: 100%;
   text-align: center;
   text-shadow: 0.2rem 0.2rem rgb(48, 48, 54);
-}
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-@media (min-width: 48em) {
-  html {
-    font-size: 62.5%;
-  }
 }
 
 .container {
@@ -109,4 +103,10 @@ body[data-mode='Break'] .center {
 
 .control-btns .btn {
   width: 30%;
+}
+
+@media (min-width: 48em) {
+  html {
+    font-size: 62.5%;
+  }
 }
