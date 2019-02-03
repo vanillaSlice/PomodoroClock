@@ -2,30 +2,42 @@
  * DOM Elements
  */
 
-const breakLengthElement = document.getElementById('break-length');
-const decreaseBreakBtnElement = document.getElementById('decrease-break');
-const increaseBreakBtnElement = document.getElementById('increase-break');
-const sessionLengthElement = document.getElementById('session-length');
-const decreaseSessionBtnElement = document.getElementById('decrease-session');
-const increaseSessionBtnElement = document.getElementById('increase-session');
-const remainingTimeElement = document.querySelector('.remaining-time');
-const modeElement = document.querySelector('.mode');
-const fillElement = document.querySelector('.fill');
-const startBtnElement = document.getElementById('start');
-const stopBtnElement = document.getElementById('stop');
-const clearBtnElement = document.getElementById('clear');
+const bodyElement = document.querySelector('.js-body');
+const breakLengthElement = document.querySelector('.js-break-length');
+const decreaseBreakBtnElement = document.querySelector('.js-decrease-break-btn');
+const increaseBreakBtnElement = document.querySelector('.js-increase-break-btn');
+const sessionLengthElement = document.querySelector('.js-session-length');
+const decreaseSessionBtnElement = document.querySelector('.js-decrease-session-btn');
+const increaseSessionBtnElement = document.querySelector('.js-increase-session-btn');
+const fillElement = document.querySelector('.js-fill');
+const modeElement = document.querySelector('.js-mode');
+const remainingTimeElement = document.querySelector('.js-remaining-time');
+const startBtnElement = document.querySelector('.js-start-btn');
+const stopBtnElement = document.querySelector('.js-stop-btn');
+const clearBtnElement = document.querySelector('.js-clear-btn');
 
 /*
- * Helper Functions
+ * Variables
+ */
+
+let breakLengthInMinutes = 5;
+let sessionLengthInMinutes = 25;
+let startTime;
+let mode = 'Session';
+let timerLength = 1500000;
+let originalTimerLength = 1500000;
+let remainingTime = 1500000;
+let isStopped = true;
+let timerIntervalId;
+
+/*
+ * Functions
  */
 
 function minutesToMilliseconds(minutes) {
   return minutes * 60000;
 }
 
-/*
-  * Converts milliseconds to formatted string. e.g. 1500000 returns '25:00'.
-  */
 function formatTime(time) {
   const minutes = parseInt((time / 1000) / 60, 10);
   let seconds = parseInt((time / 1000) % 60, 10);
@@ -35,102 +47,7 @@ function formatTime(time) {
   return `${minutes}:${seconds}`;
 }
 
-/*
- * All times are stored in milliseconds unless stated otherwise.
- */
-
-let breakLengthInMinutes = 5;
-let sessionLengthInMinutes = 25;
-let startTime;
-let mode = 'Session';
-let timerLength = minutesToMilliseconds(sessionLengthInMinutes);
-let originalTimerLength = timerLength;
-let remainingTime = timerLength;
-let isStopped = true;
-let timerIntervalId;
-
-/*
- * Initialise DOM elements.
- */
-
-breakLengthElement.innerText = breakLengthInMinutes;
-sessionLengthElement.innerText = sessionLengthInMinutes;
-remainingTimeElement.innerText = formatTime(timerLength);
-modeElement.innerText = 'Pomodoro';
-
-/*
-  * Add button event listeners.
-  */
-
-function updateTimer() {
-  // 1. Switch mode if needed
-  if (remainingTime <= 0) {
-    if (mode === 'Session') {
-      mode = 'Break';
-      timerLength = minutesToMilliseconds(breakLengthInMinutes);
-    } else {
-      mode = 'Session';
-      timerLength = minutesToMilliseconds(sessionLengthInMinutes);
-    }
-    startTime = Date.now();
-    originalTimerLength = timerLength;
-    remainingTime = timerLength;
-    document.body.setAttribute('data-mode', mode);
-    modeElement.innerText = mode;
-  }
-
-  // 2. Update remaining time
-  const elapsedTime = Date.now() - startTime;
-  remainingTime = timerLength - elapsedTime;
-  remainingTimeElement.innerText = formatTime(remainingTime);
-
-  // 3. Update fill element height in DOM
-  const percentageComplete = parseInt(
-    (originalTimerLength - remainingTime) / originalTimerLength * 100,
-    10,
-  );
-  fillElement.style.height = `${percentageComplete}%`;
-}
-
-startBtnElement.addEventListener('click', () => {
-  // already running so don't need to do anything
-  if (!isStopped) {
-    return;
-  }
-
-  isStopped = false;
-  startTime = Date.now();
-  document.body.setAttribute('data-mode', mode);
-  modeElement.innerText = mode;
-  timerIntervalId = setInterval(updateTimer, 200);
-});
-
-stopBtnElement.addEventListener('click', () => {
-  // already stopped so don't need to do anything
-  if (isStopped) {
-    return;
-  }
-
-  clearInterval(timerIntervalId);
-  isStopped = true;
-  timerLength -= Date.now() - startTime;
-});
-
-clearBtnElement.addEventListener('click', () => {
-  clearInterval(timerIntervalId);
-  isStopped = true;
-  mode = 'Session';
-  timerLength = minutesToMilliseconds(sessionLengthInMinutes);
-  originalTimerLength = timerLength;
-  remainingTime = timerLength;
-  remainingTimeElement.innerText = formatTime(remainingTime);
-  document.body.removeAttribute('data-mode');
-  fillElement.style.height = '0%';
-  modeElement.innerText = 'Pomodoro';
-});
-
 function updateBreakLength(length) {
-  // make sure we can't update break to be less than 1
   if (length < 1) {
     return;
   }
@@ -140,7 +57,7 @@ function updateBreakLength(length) {
 
   if (mode === 'Break') {
     startTime = Date.now();
-    timerLength = breakLengthInMinutes * 60000;
+    timerLength = minutesToMilliseconds(breakLengthInMinutes);
     originalTimerLength = timerLength;
     remainingTime = timerLength;
     remainingTimeElement.innerText = formatTime(remainingTime);
@@ -148,16 +65,7 @@ function updateBreakLength(length) {
   }
 }
 
-decreaseBreakBtnElement.addEventListener('click', () => {
-  updateBreakLength(breakLengthInMinutes - 1);
-});
-
-increaseBreakBtnElement.addEventListener('click', () => {
-  updateBreakLength(breakLengthInMinutes + 1);
-});
-
 function updateSessionLength(length) {
-  // make sure we can't update session to be less than 1
   if (length < 1) {
     return;
   }
@@ -167,7 +75,7 @@ function updateSessionLength(length) {
 
   if (mode === 'Session') {
     startTime = Date.now();
-    timerLength = sessionLengthInMinutes * 60000;
+    timerLength = minutesToMilliseconds(sessionLengthInMinutes);
     originalTimerLength = timerLength;
     remainingTime = timerLength;
     remainingTimeElement.innerText = formatTime(remainingTime);
@@ -175,10 +83,87 @@ function updateSessionLength(length) {
   }
 }
 
-decreaseSessionBtnElement.addEventListener('click', () => {
-  updateSessionLength(sessionLengthInMinutes - 1);
-});
+function switchMode() {
+  if (mode === 'Session') {
+    mode = 'Break';
+    timerLength = minutesToMilliseconds(breakLengthInMinutes);
+  } else {
+    mode = 'Session';
+    timerLength = minutesToMilliseconds(sessionLengthInMinutes);
+  }
+  startTime = Date.now();
+  originalTimerLength = timerLength;
+  remainingTime = timerLength;
+  bodyElement.setAttribute('data-mode', mode);
+  modeElement.innerText = mode;
+}
 
-increaseSessionBtnElement.addEventListener('click', () => {
-  updateSessionLength(sessionLengthInMinutes + 1);
-});
+function updateRemainingTime() {
+  const elapsedTime = Date.now() - startTime;
+  remainingTime = timerLength - elapsedTime;
+  remainingTimeElement.innerText = formatTime(remainingTime);
+}
+
+function updateFillElement() {
+  const complete = parseInt((originalTimerLength - remainingTime) / originalTimerLength * 100, 10);
+  fillElement.style.height = `${complete}%`;
+}
+
+function updateTimer() {
+  if (remainingTime <= 0) {
+    switchMode();
+  }
+  updateRemainingTime();
+  updateFillElement();
+}
+
+function handleStartBtnClick() {
+  if (!isStopped) {
+    return;
+  }
+
+  isStopped = false;
+  startTime = Date.now();
+  bodyElement.setAttribute('data-mode', mode);
+  modeElement.innerText = mode;
+  timerIntervalId = setInterval(updateTimer, 200);
+}
+
+function handleStopBtnClick() {
+  if (isStopped) {
+    return;
+  }
+
+  clearInterval(timerIntervalId);
+  isStopped = true;
+  timerLength -= Date.now() - startTime;
+}
+
+function handleClearBtnClick() {
+  clearInterval(timerIntervalId);
+  isStopped = true;
+  mode = 'Session';
+  timerLength = minutesToMilliseconds(sessionLengthInMinutes);
+  originalTimerLength = timerLength;
+  remainingTime = timerLength;
+  remainingTimeElement.innerText = formatTime(remainingTime);
+  bodyElement.removeAttribute('data-mode');
+  fillElement.style.height = '0%';
+  modeElement.innerText = 'Pomodoro';
+}
+
+/*
+ * Initialise
+ */
+
+breakLengthElement.innerText = breakLengthInMinutes;
+decreaseBreakBtnElement.addEventListener('click', () => updateBreakLength(breakLengthInMinutes - 1));
+increaseBreakBtnElement.addEventListener('click', () => updateBreakLength(breakLengthInMinutes + 1));
+sessionLengthElement.innerText = sessionLengthInMinutes;
+decreaseSessionBtnElement.addEventListener('click', () => updateSessionLength(sessionLengthInMinutes - 1));
+increaseSessionBtnElement.addEventListener('click', () => updateSessionLength(sessionLengthInMinutes + 1));
+modeElement.innerText = 'Pomodoro';
+remainingTimeElement.innerText = formatTime(timerLength);
+startBtnElement.addEventListener('click', handleStartBtnClick);
+stopBtnElement.addEventListener('click', handleStopBtnClick);
+clearBtnElement.addEventListener('click', handleClearBtnClick);

@@ -23,34 +23,34 @@
   <link rel="stylesheet" href="./styles/style.css">
 </head>
 
-<body>
+<body class="js-body">
   <main class="container">
     <h1 class="heading">Pomodoro Clock</h1>
     <div class="mode-btns">
       <div class="break-btns">
         <p>Break Length</p>
-        <button class="btn" type="button" id="decrease-break">-</button>
-        <span class="length" id="break-length"></span>
-        <button class="btn" type="button" id="increase-break">+</button>
+        <button class="btn js-decrease-break-btn" type="button">-</button>
+        <span class="length js-break-length"></span>
+        <button class="btn js-increase-break-btn" type="button">+</button>
       </div>
       <div class="session-btns">
         <p>Session Length</p>
-        <button class="btn" type="button" id="decrease-session">-</button>
-        <span class="length" id="session-length"></span>
-        <button class="btn" type="button" id="increase-session">+</button>
+        <button class="btn js-decrease-session-btn" type="button">-</button>
+        <span class="length js-session-length"></span>
+        <button class="btn js-increase-session-btn" type="button">+</button>
       </div>
     </div>
     <div class="progress">
-      <div class="fill"></div>
+      <div class="fill js-fill"></div>
       <div class="center">
-        <p class="mode"></p>
-        <p class="remaining-time"></p>
+        <p class="mode js-mode"></p>
+        <p class="remaining-time js-remaining-time"></p>
       </div>
     </div>
     <div class="control-btns">
-      <button class="btn" type="button" id="start">Start</button>
-      <button class="btn" type="button" id="stop">Stop</button>
-      <button class="btn" type="button" id="clear">Clear</button>
+      <button class="btn js-start-btn" type="button">Start</button>
+      <button class="btn js-stop-btn" type="button">Stop</button>
+      <button class="btn js-clear-btn" type="button">Clear</button>
     </div>
   </main>
 
