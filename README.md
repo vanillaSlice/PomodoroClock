@@ -6,7 +6,7 @@
 
 *Advanced Front End Development Project for FreeCodeCamp.*
 
-A simple Pomodoro clock. A deployed version can be viewed [here](https://vanillaslice.github.io/PomodoroClock/).
+A simple Pomodoro clock. A deployed version can be viewed [here](https://pomodoro.mikelowe.xyz/).
 
 ## Screenshot
 
