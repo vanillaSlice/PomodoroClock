@@ -1,3 +1,5 @@
+import { version } from '../../package.json'
+
 /*
  * DOM Elements
  */
@@ -15,6 +17,7 @@ const remainingTimeElement = document.querySelector('.js-remaining-time');
 const startBtnElement = document.querySelector('.js-start-btn');
 const stopBtnElement = document.querySelector('.js-stop-btn');
 const clearBtnElement = document.querySelector('.js-clear-btn');
+const versionElement = document.querySelector('.js-version');
 
 /*
  * Variables
@@ -167,3 +170,4 @@ remainingTimeElement.innerText = formatTime(timerLength);
 startBtnElement.addEventListener('click', handleStartBtnClick);
 stopBtnElement.addEventListener('click', handleStopBtnClick);
 clearBtnElement.addEventListener('click', handleClearBtnClick);
+versionElement.innerText = version;
