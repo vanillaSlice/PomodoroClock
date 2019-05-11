@@ -21,9 +21,19 @@ body {
   text-shadow: 0.2rem 0.2rem rgb(48, 48, 54);
 }
 
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:focus,
+a:hover {
+  color: rgb(179, 174, 179);
+}
+
 .container {
   margin: auto;
-  padding: 3rem 1.5rem;
+  padding: 8rem 1.5rem;
 }
 
 .heading {
@@ -103,6 +113,16 @@ body[data-mode='Break'] .center {
 
 .control-btns .btn {
   width: 30%;
+}
+
+.footer {
+  font-size: 1.2rem;
+  margin-top: 3rem;
+}
+
+.footer .separator::after {
+  content: '|';
+  margin: 0 0.3rem;
 }
 
 @media (min-width: 48em) {
